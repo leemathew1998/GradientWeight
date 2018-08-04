@@ -45,14 +45,8 @@ def adjust_learning_rate(optimizer, i_iter, net, train_args):
     """Sets the learning rate to the initial LR divided by 5 at 60th, 120th and 160th epochs"""
     lr = lr_poly(0.0001, i_iter)
     print('current lr:', lr)
-    
-    # optimizer.step()
-    # optimizer = optim.RMSprop(net.parameters(), lr=lr, alpha=0.99, eps=1e-08, weight_decay=train_args['weight_decay'], momentum=0.9, centered=False)
-    # optimizer = optim.Adam(net.parameters(), lr=lr, betas=(0.9, 0.999), eps=1e-08, weight_decay=train_args['weight_decay'])
-    optimizer = optim.SGD(net.parameters(),lr=lr, momentum=train_args['momentum'],weight_decay=train_args['weight_decay'])
-    # optimizer = optim.SGD([{'params': get_1x_lr_params_NOscale(net), 'lr': lr }, {'params': get_10x_lr_params(net), 'lr': 10*lr} ], lr = lr, momentum = train_args['momentum'],weight_decay = train_args['weight_decay'])
-    # optimizer.zero_grad()
-    # optimizer.param_groups[1]['lr'] = lr * 10
+    for param_group in optimizer.param_groups:
+        param_group['lr'] = lr
 
 max_label = 20
 
@@ -169,7 +163,7 @@ def train(train_loader, net, criterion, optimizer, epoch, train_args):
 			assert outputs.size()[1] == voc.num_classes
 			loss_1 = criterion(outputs, labels)
 			loss_2 = criterion(aux_logits, labels)
-			loss = (loss_1 + 0.4*loss_2)*random.random()
+			loss = (loss_1 + 0.4*loss_2) * GradientWeight(epoch)
 			loss.backward()
 			optimizer.step()
 			train_loss.update(loss.data[0], N)
