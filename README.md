@@ -1,4 +1,4 @@
-# Random Gradient
+# Gradient Weight
 ## Image Classification
 We use [ResNet34](https://arxiv.org/abs/1512.03385) to train on cifar10
 ## Semantic Segmentation
