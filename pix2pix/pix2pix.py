@@ -48,7 +48,11 @@ cuda = True if torch.cuda.is_available() else False
 # Loss functions
 criterion_GAN = torch.nn.MSELoss()
 criterion_pixelwise = torch.nn.L1Loss()
-
+def GradientWeight(epoch):
+    if epoch < 70:
+        return 1
+    else:
+        return 2/3 - epoch/150
 # Loss weight of L1 pixel-wise loss between translated image and real image
 lambda_pixel = 100
 
@@ -134,8 +138,8 @@ for epoch in range(opt.epoch, opt.n_epochs):
         # Total loss
         loss_G = loss_GAN + lambda_pixel * loss_pixel
 
-        # Random Gradient
-        loss_G = loss_G * random.random()
+        # Gradient Weight
+        loss_G = loss_G * GradientWeight(epoch)
 
         loss_G.backward()
 
