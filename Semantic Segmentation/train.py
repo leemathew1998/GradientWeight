@@ -47,7 +47,11 @@ def adjust_learning_rate(optimizer, i_iter, net, train_args):
     print('current lr:', lr)
     for param_group in optimizer.param_groups:
         param_group['lr'] = lr
-
+def GradientWeight(epoch):
+    if epoch < 70:
+        return 1
+    else:
+        return 2/3 - epoch/150
 max_label = 20
 
 def get_iou(pred,gt):
