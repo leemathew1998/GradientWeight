@@ -48,6 +48,11 @@ testloader = torch.utils.data.DataLoader(testset, batch_size=128, shuffle=False,
 
 def poly(base_lr, epoch,max_iter=100,power=0.9):
     return base_lr*((1-float(epoch+1)/max_iter)**(power))
+def GradientWeight(epoch):
+    if epoch < 70:
+        return 1
+    else:
+        return 2/3 - epoch/150
 # Model
 print('==> Building model..')
 net = ResNet34()
@@ -75,7 +80,7 @@ def train(epoch):
         outputs = net(inputs)
         loss = criterion(outputs, targets)
 
-        loss_ = loss * random.random()  # Here represents the Random Gradient
+        loss_ = loss * GradientWeight(epoch)  # Here represents the Gradient Weight
         
         loss_.backward()
         optimizer.step()
